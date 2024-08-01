@@ -18,7 +18,7 @@ function Register() {
       username.current.style.outlineColor = 'red';
       return false;
     }
-
+    
     if (email.current.value.length < minLength) {
       alert('Email is not valid');
       email.current.focus();
@@ -60,7 +60,6 @@ function Register() {
       username: usernameRef.current.value,
       email: emailRef.current.value,
       password: passwordRef.current.value,
-      repassword: repasswordRef.current.value,
     };
 
     fetch("https://auth-rg69.onrender.com/api/auth/signup", {
@@ -72,18 +71,18 @@ function Register() {
     })
     .then(res => res.json())
     .then(data => {
-      if (data.message === "User registered successfully!") {
-        navigate("/login");
-        clearInputs();
-      } else {
+      if (data.message === "Failed Email is already in use!") {
         alert(data.message);
-        if (data.message.includes("Username")) {
-          usernameRef.current.focus();
-          usernameRef.current.value = '';
-        } else if (data.message.includes("Email")) {
-          emailRef.current.focus();
-          emailRef.current.value = '';
-        }
+        emailRef.current.focus();
+        return;
+      } 
+      if (data.message === "Failed Username is already in use!") {
+        alert(data.message);
+        usernameRef.current.focus();
+        return;
+      } 
+      if (data.message === "User registered successfully!") {
+        navigate('/login');
       }
     })
     .catch(err => {
@@ -91,21 +90,14 @@ function Register() {
     });
   }
 
-  function clearInputs() {
-    usernameRef.current.value = '';
-    emailRef.current.value = '';
-    passwordRef.current.value = '';
-    repasswordRef.current.value = '';
-  }
-
   return (
     <div>
-      <form className='form' onSubmit={handleSubmit}>
+      <form className='form'>
         <input ref={usernameRef} type="text" placeholder='Enter username' />
         <input ref={emailRef} type="email" placeholder='Enter email' />
         <input ref={passwordRef} type="password" placeholder='Enter password' />
         <input ref={repasswordRef} type="password" placeholder='Enter repassword' />
-        <button className='btn' type='submit'>Register</button>
+        <button className='btn' onClick={handleSubmit}>Register</button>
       </form>
     </div>
   );

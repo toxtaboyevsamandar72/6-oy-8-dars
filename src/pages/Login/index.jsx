@@ -14,7 +14,7 @@ function Login() {
       username.current.style.outlineColor = 'red';
       return false;
     }
-    
+
     if (password.current.value.length < 3) {
       alert('Password is not valid');
       password.current.focus();
@@ -47,25 +47,20 @@ function Login() {
       .then(data => {
         if (data.message === "User not found") {
           alert(data.message);
-          clearInputs();
+          usernameRef.current.focus();
+          return;
         } else if (data.message === "Invalid Password") {
           alert(data.message);
-          clearInputs();
+          passwordRef.current.focus();
         } else if (data.accessToken) {
           localStorage.setItem("user", JSON.stringify(data));
           localStorage.setItem("token", data.accessToken);
-          clearInputs();
           navigate('/');
         }
       })
       .catch(err => {
-        console.log(err);
+        console.error("Error:", err);
       });
-  }
-
-  function clearInputs() {
-    usernameRef.current.value = '';
-    passwordRef.current.value = '';
   }
 
   return (
